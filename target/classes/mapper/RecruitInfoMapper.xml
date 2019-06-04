@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.proxypool.dao.RecruitInfoMapper">
+    <resultMap id="BaseResultMap" type="com.proxypool.entry.RecruitInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="post_name" jdbcType="VARCHAR" property="postName"/>
+        <result column="experience" jdbcType="VARCHAR" property="experience"/>
+        <result column="number" jdbcType="VARCHAR" property="number"/>
+        <result column="contact" jdbcType="VARCHAR" property="contact"/>
+
+        <result column="salary" jdbcType="VARCHAR" property="salary"/>
+        <result column="area" jdbcType="VARCHAR" property="area"/>
+        <result column="education" jdbcType="VARCHAR" property="education"/>
+        <result column="welfare" jdbcType="VARCHAR" property="welfare"/>
+        <result column="job_information" jdbcType="LONGVARCHAR" property="jobInformation"/>
+
+        <result column="company_name" jdbcType="VARCHAR" property="companyName"/>
+        <result column="company_type" jdbcType="VARCHAR" property="companyType"/>
+        <result column="company_size" jdbcType="VARCHAR" property="companySize"/>
+        <result column="company_industry" jdbcType="VARCHAR" property="companyIndustry"/>
+        <result column="release_date" jdbcType="VARCHAR" property="releaseDate"/>
+
+        <result column="company_desc" jdbcType="VARCHAR" property="companyDesc"/>
+        <result column="source" jdbcType="VARCHAR" property="source"/>
+        <result column="detail_url" jdbcType="VARCHAR" property="detailUrl"/>
+        <result column="identification_code" jdbcType="VARCHAR" property="identificationCode"/>
+
+        <result column="release_dates" jdbcType="VARCHAR" property="releaseDates"/>
+        <result column="release_count" jdbcType="INTEGER" property="releaseCount"/>
+
+        <result column="min_salary" jdbcType="DECIMAL" property="minSalary"/>
+        <result column="max_salary" jdbcType="DECIMAL" property="maxSalary"/>
+
+        <result column="min_exp" jdbcType="INTEGER" property="minExp"/>
+        <result column="max_exp" jdbcType="INTEGER" property="maxExp"/>
+
+
+        <result column="version" jdbcType="INTEGER" property="version"/>
+        <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+    </resultMap>
+
+    <sql id="Table_Name">
+        t_recruit_info
+    </sql>
+
+    <sql id="Base_Column_List">
+        id, post_name, experience, min_exp, max_exp, number, contact, salary, min_salary, max_salary, area, education, welfare, job_information, company_name,
+        company_type, company_size, company_industry, company_desc, release_date, source, detail_url, identification_code,
+        release_dates, release_count
+        version, modify_time, create_time
+      </sql>
+
+
+    <insert id="insert" parameterType="com.proxypool.entry.RecruitInfo">
+        insert into t_recruit_info (id, post_name, experience, min_exp, max_exp,
+          number, contact, company_name,
+          company_type, company_size, company_industry,
+          release_date, salary, min_salary, max_salary, area,
+          education, welfare, job_information, company_desc, source, identification_code, detail_url,
+          release_dates, release_count
+          )
+        values (#{id,jdbcType=INTEGER}, #{postName,jdbcType=VARCHAR}, #{experience,jdbcType=VARCHAR}, #{minExp,jdbcType=INTEGER}, #{maxExp,jdbcType=INTEGER},
+          #{number,jdbcType=VARCHAR}, #{contact,jdbcType=VARCHAR}, #{companyName,jdbcType=VARCHAR},
+          #{companyType,jdbcType=VARCHAR}, #{companySize,jdbcType=VARCHAR}, #{companyIndustry,jdbcType=VARCHAR},
+          #{releaseDate,jdbcType=VARCHAR}, #{salary,jdbcType=VARBINARY}, #{minSalary,jdbcType=DECIMAL}, #{maxSalary,jdbcType=DECIMAL},
+          #{area,jdbcType=VARBINARY}, #{education,jdbcType=VARBINARY}, #{welfare,jdbcType=VARBINARY},
+          #{jobInformation,jdbcType=LONGVARCHAR}, #{companyDesc,jdbcType=LONGVARCHAR}, #{source,jdbcType=LONGVARCHAR},
+          #{identificationCode,jdbcType=LONGVARCHAR}, #{detailUrl,jdbcType=LONGVARCHAR}, #{releaseDates,jdbcType=LONGVARCHAR},
+          #{releaseCount,jdbcType=INTEGER}
+          )
+      </insert>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from t_recruit_info
+        where id = #{id,jdbcType=INTEGER}
+      </delete>
+
+    <delete id="delRepeatByIds">
+        delete from t_recruit_info where id in
+        <foreach collection="list" open="(" close=")" separator="," item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateByCode" parameterType="com.proxypool.entry.RecruitInfo">
+        update t_recruit_info
+        set
+        release_dates = #{releaseDates, jdbcType=VARCHAR},
+        release_count=release_count+1,
+        version = version+1,
+        modify_time = now()
+        where
+        identification_code = #{identificationCode, jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.proxypool.entry.RecruitInfo">
+        update t_recruit_info
+        set
+          post_name = #{postName,jdbcType=VARCHAR},
+          experience = #{experience,jdbcType=VARCHAR},
+          min_exp = #{minExp,jdbcType=INTEGER},
+          max_exp = #{maxExp,jdbcType=INTEGER},
+          number = #{number,jdbcType=VARCHAR},
+          contact = #{contact,jdbcType=VARCHAR},
+          company_name = #{companyName,jdbcType=VARCHAR},
+          company_type = #{companyType,jdbcType=VARCHAR},
+          company_size = #{companySize,jdbcType=VARCHAR},
+          company_industry = #{companyIndustry,jdbcType=VARCHAR},
+          company_desc = #{companyDesc,jdbcType=VARCHAR},
+          release_date = #{releaseDate,jdbcType=VARCHAR},
+          salary = #{salary,jdbcType=VARCHAR},
+          min_salary = #{minSalary,jdbcType=DECIMAL},
+          max_salary = #{maxSalary,jdbcType=DECIMAL},
+          area = #{area,jdbcType=VARCHAR},
+          education = #{education,jdbcType=VARCHAR},
+          welfare = #{welfare,jdbcType=VARCHAR},
+          job_information = #{job_information,jdbcType=VARCHAR},
+          source = #{source,jdbcType=VARCHAR},
+          detail_url = #{detailUrl,jdbcType=VARCHAR},
+          identification_code = #{identificationCode,jdbcType=VARCHAR},
+          version = version+1,
+          modify_time = now(),
+          create_time = #{createTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=INTEGER}
+      </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_recruit_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="getCountByCode" resultType="java.lang.Integer">
+        select count(1) as total from t_recruit_info where identification_code = #{code}
+    </select>
+
+    <select id="getByIdentificationCode" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from t_recruit_info where identification_code = #{code}
+    </select>
+
+    <select id="getRepeatRecruitIds" resultType="java.lang.Integer">
+        SELECT id FROM t_recruit_info WHERE identification_code IN (
+        SELECT identification_code FROM t_recruit_info GROUP BY identification_code HAVING COUNT(1)>1)
+        ORDER BY post_name
+    </select>
+
+    <!-- 多条件分页查询 -->
+    <select id="queryRecruit" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="Table_Name"/>
+        <where>
+            <if test="companyName != null or companyName!=''">
+                and company_name like CONCAT('%' ,CONCAT(#{companyName},'%'))
+            </if>
+            <if test="postName != null or postName!=''">
+                and post_name like CONCAT('%' ,CONCAT(#{postName},'%'))
+            </if>
+            <if test="releaseTime != null or releaseTime!=''">
+                and release_date like CONCAT('%' ,CONCAT(#{releaseTime},'%'))
+            </if>
+            <if test="minSalary!=null and minSalary!=''">
+                <![CDATA[ and min_salary >= #{minSalary, jdbcType=DECIMAL}]]>
+            </if>
+            <if test="maxSalary!=null and maxSalary!=''">
+                <![CDATA[ and max_salary <= #{maxSalary, jdbcType=DECIMAL}]]>
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <!-- 整理数据库中的数据 -->
+    <select id="selectRecruit" resultMap="BaseResultMap">
+        select
+        id, number, experience, salary, release_date, release_dates
+        from
+        <include refid="Table_Name"/>
+        order by id desc
+    </select>
+
+    <update id="updateBatch" parameterType="java.util.List">
+        update
+        <include refid="Table_Name"/>
+        <trim prefix="set" suffixOverrides=",">
+            <trim prefix="min_salary =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.minSalary}
+                </foreach>
+            </trim>
+            <trim prefix="max_salary =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.maxSalary}
+                </foreach>
+            </trim>
+            <trim prefix="release_date =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.releaseDate}
+                </foreach>
+            </trim>
+            <trim prefix="release_dates =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.releaseDates}
+                </foreach>
+            </trim>
+            <trim prefix="number =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.number}
+                </foreach>
+            </trim>
+            <trim prefix="min_exp =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.minExp}
+                </foreach>
+            </trim>
+            <trim prefix="max_exp =case" suffix="end,">
+                <foreach collection="list" item="item" index="index">
+                    when id=#{item.id} then #{item.maxExp}
+                </foreach>
+            </trim>
+        </trim>
+        where id in
+        <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+            #{item.id,jdbcType=INTEGER}
+        </foreach>
+    </update>
+
+
+</mapper>

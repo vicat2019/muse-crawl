@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>BBN</title>
+    <script type="application/javascript" src="/js/jquery-3.3.1.min.js" charset="UTF-8"></script>
+</head>
+<style type="text/css">
+
+    ul.pagination {
+        display: inline-block;
+        padding: 0;
+        /*margin: 0;*/
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+
+    ul.pagination li {
+        display: inline;
+    }
+
+    ul.pagination li a {
+        color: black;
+        float: left;
+        padding: 6px 12px;
+        text-decoration: none;
+        transition: background-color .3s;
+    }
+
+    ul.pagination li a.active {
+        background-color: #33a3dc;
+        color: white;
+    }
+
+    ul.pagination li a:hover:not(.active) {
+        background-color: #ddd;
+    }
+
+    table.content {
+        margin-top: 5px;
+        color: olive;
+    }
+
+    table.content tr {
+        padding-top: 1px;
+        background-color: #fffffb;
+        height: 25px;
+    }
+
+    .hand-class {
+        text-decoration: none;
+    }
+
+    .interested {
+        color: pink;
+    }
+
+    a:link {
+        color: olive;
+    }
+
+    a:visited {
+        color: olive;
+    }
+
+    a:hover {
+        color: olive;
+    }
+
+    a:active {
+        color: olive;
+    }
+
+
+</style>
+
+<body>
+
+<center>
+    <table class="content">
+        <tbody id="content">
+        <tr th:each="p, index : ${data.list}">
+            <td width="50" th:text="${p.id}"></td>
+
+            <td th:if="${p.status == '1'}" class="interested" th:text="${p.name}"></td>
+            <td th:if="${p.status == '0'}" th:text="${p.name}"></td>
+
+            <td style="width: 100px; text-align: right; padding-right: 5px;">
+                <a th:if="${p.status == '0'}" class="hand-class" href="javascript:"
+                   th:onclick="@{'add(' + ${p.id} + ')'}">加入</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <input type="hidden" name="page" id="page" th:value="${data.pageNum}">
+    <input type="hidden" name="size" id="size" th:value="${data.pageSize}">
+
+
+</center>
+
+</body>
+<script type="application/javascript">
+
+    function add(id) {
+        $.get("/bbn/interested?id=" + id, function (data) {
+            // alert(data['message']);
+
+            refresh();
+        });
+    }
+
+    function refresh() {
+        var page = $("#page").val();
+        var size = $("#size").val();
+        console.log("page=" + page + ", size=" + size);
+
+        $.get("/bbn/ajax/list?page=" + page + "&size=" + size, function (data) {
+
+            console.log(data);
+
+            var content = "";
+            for (var index in data.list) {
+                var item = data.list[index];
+                content += "<tr><td width=\"50\">" + item.id + "</td>";
+                if (item.status == '1') {
+                    content += "<td class=\"interested\">" + item.name + "</td>";
+                } else {
+                    content += "<td>" + item.name + "</td>";
+                }
+                content += "<td style=\"width: 100px; text-align: right; padding-right: 5px;\">";
+                if (item.status == 0) {
+                    content += "<a class=\"hand-class\" href=\"javascript:\" th:onclick='add(" + item.id + ")'>加入</a>";
+                }
+                content += "</td></tr>";
+            }
+
+            console.log(content);
+
+            $("#content").empty();
+            $("#content").html(content);
+        });
+    }
+
+
+</script>
+
+</html>
