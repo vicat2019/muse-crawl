@@ -11,7 +11,6 @@
     ul.pagination {
         display: inline-block;
         padding: 0;
-        /*margin: 0;*/
         margin-top: 30px;
         margin-bottom: 20px;
     }
@@ -39,13 +38,19 @@
 
     table.content {
         margin-top: 5px;
-        color: olive;
+        color: #696969;
     }
 
     table.content tr {
         padding-top: 1px;
         background-color: #fffffb;
         height: 25px;
+        text-decoration: none;
+    }
+
+    table.content tr:hover{
+        background:#90EE90;
+        color: #2E8B57;
     }
 
     .hand-class {
@@ -53,7 +58,7 @@
     }
 
     .interested {
-        color: pink;
+        color: #228B22;
     }
 
     a:link {
@@ -80,15 +85,21 @@
 <center>
     <table class="content">
         <tbody id="content">
-        <tr th:each="p, index : ${data.list}">
-            <td width="50" th:text="${p.id}"></td>
+        <tr th:each="p, index : ${data.list}" th:id="@{'tr_' + ${p.id}}">
+            <td width="50">
+                <a href="javascript:" th:onclick="@{'record(' + ${p.id} + ')'}">
+                    <span th:text="${p.id}"></span>
+                </a>
+            </td>
 
             <td th:if="${p.status == '1'}" class="interested" th:text="${p.name}"></td>
-            <td th:if="${p.status == '0'}" th:text="${p.name}"></td>
+            <td th:id="@{'name_' + ${p.id}}" style="color: #696969" th:if="${p.status == '0'}" th:text="${p.name}"></td>
 
             <td style="width: 100px; text-align: right; padding-right: 5px;">
                 <a th:if="${p.status == '0'}" class="hand-class" href="javascript:"
-                   th:onclick="@{'add(' + ${p.id} + ')'}">加入</a>
+                   th:onclick="@{'add(' + ${p.id} + ')'}">+</a>
+                <a th:if="${p.status == '1'}" class="hand-class" href="javascript:"
+                   th:onclick="@{'unadd(' + ${p.id} + ')'}">-</a>
             </td>
         </tr>
         </tbody>
@@ -97,6 +108,14 @@
     <input type="hidden" name="page" id="page" th:value="${data.pageNum}">
     <input type="hidden" name="size" id="size" th:value="${data.pageSize}">
 
+    <table style="margin-bottom: 0px;height: 30px;text-align: center;">
+        <tr>
+            <td><a style="text-decoration: none;" href="javascript:" onclick="pre();">上一页</a> </td>
+            <td id="currPage" th:text="${data.pageNum}"></td>
+            <td><a style="text-decoration: none;" href="javascript:" onclick="next();">下一页</a> </td>
+        </tr>
+    </table>
+
 
 </center>
 
@@ -104,9 +123,14 @@
 <script type="application/javascript">
 
     function add(id) {
+        alert("123");
         $.get("/bbn/interested?id=" + id, function (data) {
-            // alert(data['message']);
+            refresh();
+        });
+    }
 
+    function unadd(id) {
+        $.get("/bbn/uninterested?id=" + id, function (data) {
             refresh();
         });
     }
@@ -116,14 +140,15 @@
         var size = $("#size").val();
         console.log("page=" + page + ", size=" + size);
 
-        $.get("/bbn/ajax/list?page=" + page + "&size=" + size, function (data) {
+        $("#currPage").text(page);
 
+        $.get("/bbn/ajax/list?page=" + page + "&size=" + size, function (data) {
             console.log(data);
 
             var content = "";
             for (var index in data.list) {
                 var item = data.list[index];
-                content += "<tr><td width=\"50\">" + item.id + "</td>";
+                content += "<tr><td width=\"50\"><a href='javascrip:' onclick='record(" + item.id + ")'>" + item.id + "</a></td>";
                 if (item.status == '1') {
                     content += "<td class=\"interested\">" + item.name + "</td>";
                 } else {
@@ -131,7 +156,9 @@
                 }
                 content += "<td style=\"width: 100px; text-align: right; padding-right: 5px;\">";
                 if (item.status == 0) {
-                    content += "<a class=\"hand-class\" href=\"javascript:\" th:onclick='add(" + item.id + ")'>加入</a>";
+                    content += "<a class=\"hand-class\" href=\"javascript:\" th:onclick='add(" + item.id + ")'>+</a>";
+                } else {
+                    content += "<a class=\"hand-class\" href=\"javascript:\" th:onclick='unadd(" + item.id + ")'>-</a>";
                 }
                 content += "</td></tr>";
             }
@@ -141,6 +168,29 @@
             $("#content").empty();
             $("#content").html(content);
         });
+    }
+
+    function record(id) {
+        $.get("/bbn/ajax/record/" + id, function (data) {
+            console.log(data);
+            alert(data.message);
+        });
+    }
+
+    function next() {
+        var page = $("#page").val();
+        var size = $("#size").val();
+        $("#page").val(parseInt(page) + 1);
+
+        refresh();
+    }
+
+    function pre() {
+        var page = $("#page").val();
+        var size = $("#size").val();
+        $("#page").val(parseInt(page) - 1);
+
+        refresh();
     }
 
 

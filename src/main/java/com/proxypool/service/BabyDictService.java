@@ -15,5 +15,7 @@ public interface BabyDictService {
 
     ResultData updateFilter(String type, String filter);
 
+    ResultData record(int id, int type);
+
 
 }

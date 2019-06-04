@@ -6,15 +6,13 @@ import com.proxypool.base.ResultData;
 import com.proxypool.entry.BabyNameInfo;
 import com.proxypool.service.BabyDictService;
 import com.proxypool.service.BabyNameService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/bbn")
 @Controller
@@ -34,11 +32,17 @@ public class BabyNameController {
     }
 
     @RequestMapping("/list")
-    public String getBabyName(int page, int size, ModelMap modelMap) {
+    public String getBabyName(@RequestParam(required = false, defaultValue = "1") int page,
+                              @RequestParam(required = false, defaultValue = "30") int size, ModelMap modelMap) {
         PageInfo<BabyNameInfo> data = babyNameService.getName(page, size);
         modelMap.addAttribute("data", data);
 
-        System.out.println(JSON.toJSONString(data));
+        String recordIdStr = babyDictService.getValueByName("baba_record");
+        if (!StringUtils.isEmpty(recordIdStr)) {
+            modelMap.addAttribute("record", Integer.valueOf(recordIdStr));
+        } else {
+            modelMap.addAttribute("baba_record", 0);
+        }
 
         return "bbn/index";
     }
@@ -54,6 +58,19 @@ public class BabyNameController {
     public ResultData beInterested(int id) {
         return babyNameService.updateStatus(id, "1");
     }
+
+    @RequestMapping("/uninterested")
+    @ResponseBody
+    public ResultData beUnInterested(int id) {
+        return babyNameService.updateStatus(id, "2");
+    }
+
+    @RequestMapping("/ajax/record/{id}")
+    @ResponseBody
+    public ResultData record(@PathVariable int id) {
+        return babyDictService.record(id, 1);
+    }
+
 
     @RequestMapping("/del")
     public ResultData del(int id) {

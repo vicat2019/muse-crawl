@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 import java.util.Map;
@@ -71,6 +72,26 @@ public class BabyDictInfoServiceImpl extends BaseService<BabyDictInfoMapper, Bab
         } else {
             return ResultData.getErrResult();
         }
+    }
+
+    @Override
+    public ResultData record(int id, int type) {
+        if (id == 0) {
+            return ResultData.getErrResult("参数异常");
+        }
+
+        String name = type==1?"baba_record":"mama_record";
+
+        // 设置值
+        Example example = new Example(BabyDictInfo.class);
+        example.createCriteria().andEqualTo("name", "baba_record");
+
+        BabyDictInfo babyDictInfo = new BabyDictInfo();
+        babyDictInfo.setValue(String.valueOf(id));
+
+        int count = mapper.updateByExampleSelective(babyDictInfo, example);
+
+        return (count>0?ResultData.getSuccessResult("记录成功"):ResultData.getErrResult("记录失败"));
     }
 
     @Override
