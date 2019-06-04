@@ -44,6 +44,12 @@ public class BabyNameController {
             modelMap.addAttribute("baba_record", 0);
         }
 
+        // 过滤内容
+        String secondFilter = babyDictService.getValueByName("secondFilter");
+        String thirdFilter = babyDictService.getValueByName("thirdFilter");
+        modelMap.put("secondFilter", secondFilter);
+        modelMap.put("thirdFilter", thirdFilter);
+
         return "bbn/index";
     }
 

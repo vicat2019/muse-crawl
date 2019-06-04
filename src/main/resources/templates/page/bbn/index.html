@@ -61,21 +61,10 @@
         color: #228B22;
     }
 
-    a:link {
-        color: olive;
-    }
-
-    a:visited {
-        color: olive;
-    }
-
-    a:hover {
-        color: olive;
-    }
-
-    a:active {
-        color: olive;
-    }
+    a:link { color: olive; }
+    a:visited { color: olive; }
+    a:hover { color: olive; }
+    a:active { color: olive; }
 
 
 </style>
@@ -83,6 +72,21 @@
 <body>
 
 <center>
+    <table style="width: 800px;">
+        <tr>
+            <td style="width: auto;">第二个字不包含以下字：</td>
+        </tr>
+        <tr>
+            <td th:text="${secondFilter}"></td>
+        </tr>
+        <tr>
+            <td>第三个字不包含以下字：</td>
+        </tr>
+        <tr>
+            <td th:text="${thirdFilter}"></td>
+        </tr>
+    </table>
+    <hr>
     <table class="content">
         <tbody id="content">
         <tr th:each="p, index : ${data.list}" th:id="@{'tr_' + ${p.id}}">
@@ -123,7 +127,6 @@
 <script type="application/javascript">
 
     function add(id) {
-        alert("123");
         $.get("/bbn/interested?id=" + id, function (data) {
             refresh();
         });
@@ -148,7 +151,7 @@
             var content = "";
             for (var index in data.list) {
                 var item = data.list[index];
-                content += "<tr><td width=\"50\"><a href='javascrip:' onclick='record(" + item.id + ")'>" + item.id + "</a></td>";
+                content += "<tr><td width=\"50\"><a style='text-decoration: none;' href='javascrip:' onclick='record(" + item.id + ")'>" + item.id + "</a></td>";
                 if (item.status == '1') {
                     content += "<td class=\"interested\">" + item.name + "</td>";
                 } else {
@@ -156,9 +159,9 @@
                 }
                 content += "<td style=\"width: 100px; text-align: right; padding-right: 5px;\">";
                 if (item.status == 0) {
-                    content += "<a class=\"hand-class\" href=\"javascript:\" th:onclick='add(" + item.id + ")'>+</a>";
+                    content += "<a class=\"hand-class\" href=\"javascript:\" onclick='add(" + item.id + ")'>+</a>";
                 } else {
-                    content += "<a class=\"hand-class\" href=\"javascript:\" th:onclick='unadd(" + item.id + ")'>-</a>";
+                    content += "<a class=\"hand-class\" href=\"javascript:\" onclick='unadd(" + item.id + ")'>-</a>";
                 }
                 content += "</td></tr>";
             }
