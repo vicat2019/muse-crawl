@@ -5,6 +5,7 @@
         <id column="id" jdbcType="INTEGER" property="id"/>
 
         <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="pin_yin" jdbcType="VARCHAR" property="pinYin"/>
 
         <result column="status" jdbcType="VARCHAR" property="status"/>
         <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime"/>
@@ -29,7 +30,51 @@
     </insert>
 
     <select id="queryBy" parameterType="com.proxypool.entry.BabyNameInfo" resultMap="BaseResultMap">
-        select <include refid="Base_Column_List"/> from <include refid="table_name"/> order by id
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="table_name"/>
+        order by id
     </select>
+
+    <select id="multiQuery" parameterType="com.proxypool.entry.QueryFormVo" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+        limit #{start}, #{size}
+    </select>
+
+    <select id="multiQueryCount" parameterType="com.proxypool.entry.QueryFormVo" resultType="int">
+        select count(1) as total
+        from
+        <include refid="table_name"/>
+        <where>
+            <include refid="condition"/>
+        </where>
+    </select>
+
+    <!-- 查询条件 -->
+    <sql id="condition">
+        <if test="queryFormVo.secondList!=null and queryFormVo.secondList.size!=0">
+            AND SUBSTRING(NAME, 2, 1) NOT IN
+            <foreach collection="queryFormVo.secondList" item="alpha" close=")" separator="," open="(">
+                #{alpha}
+            </foreach>
+        </if>
+        <if test="queryFormVo.thirdList!=null and queryFormVo.thirdList.size!=0">
+            AND SUBSTRING(NAME, 3, 1) NOT IN
+            <foreach collection="queryFormVo.thirdList" item="alpha" close=")" separator="," open="(">
+                #{alpha}
+            </foreach>
+        </if>
+        <if test="queryFormVo.name!=null and queryFormVo.name!=''">
+            AND name LIKE CONCAT('%',#{queryFormVo.name},'%')
+        </if>
+    </sql>
+
 
 </mapper>

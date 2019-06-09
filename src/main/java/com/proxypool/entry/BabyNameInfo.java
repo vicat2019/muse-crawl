@@ -12,6 +12,8 @@ public class BabyNameInfo extends BaseEntityInfo {
 
     private String name;
 
+    private String pinYin;
+
     public BabyNameInfo() {}
 
     public BabyNameInfo(int id) {
@@ -28,5 +30,13 @@ public class BabyNameInfo extends BaseEntityInfo {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPinYin() {
+        return pinYin;
+    }
+
+    public void setPinYin(String pinYin) {
+        this.pinYin = pinYin;
     }
 }
