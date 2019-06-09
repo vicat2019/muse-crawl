@@ -45,7 +45,7 @@
         <where>
             <include refid="condition"/>
         </where>
-        limit #{start}, #{size}
+        limit #{queryFormVo.start}, #{queryFormVo.size}
     </select>
 
     <select id="multiQueryCount" parameterType="com.proxypool.entry.QueryFormVo" resultType="int">
@@ -59,22 +59,40 @@
 
     <!-- 查询条件 -->
     <sql id="condition">
-        <if test="queryFormVo.secondList!=null and queryFormVo.secondList.size!=0">
+        <if test="queryFormVo.secondFilterList!=null and queryFormVo.secondFilterList.size!=0">
             AND SUBSTRING(NAME, 2, 1) NOT IN
-            <foreach collection="queryFormVo.secondList" item="alpha" close=")" separator="," open="(">
+            <foreach collection="queryFormVo.secondFilterList" item="alpha" close=")" separator="," open="(">
                 #{alpha}
             </foreach>
         </if>
-        <if test="queryFormVo.thirdList!=null and queryFormVo.thirdList.size!=0">
+        <if test="queryFormVo.thirdFilterList!=null and queryFormVo.thirdFilterList.size!=0">
             AND SUBSTRING(NAME, 3, 1) NOT IN
-            <foreach collection="queryFormVo.thirdList" item="alpha" close=")" separator="," open="(">
+            <foreach collection="queryFormVo.thirdFilterList" item="alpha" close=")" separator="," open="(">
                 #{alpha}
             </foreach>
+        </if>
+        <if test="queryFormVo.filterList!=null and queryFormVo.filterList.size!=0">
+            AND (SUBSTRING(NAME, 2, 1) NOT IN
+            <foreach collection="queryFormVo.filterList" item="alpha" close=")" separator="," open="(">
+                #{alpha}
+            </foreach>
+            AND SUBSTRING(NAME, 3, 1) NOT IN
+            <foreach collection="queryFormVo.filterList" item="alpha" close=")" separator="," open="(">
+                #{alpha}
+            </foreach>)
         </if>
         <if test="queryFormVo.name!=null and queryFormVo.name!=''">
             AND name LIKE CONCAT('%',#{queryFormVo.name},'%')
         </if>
     </sql>
+
+
+    <select id="querySelected" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" /> from <include refid="table_name"/>
+        where
+        status = "1"
+        order by id
+    </select>
 
 
 </mapper>

@@ -7,8 +7,11 @@ import com.proxypool.entry.BabyNameInfo;
 import com.proxypool.entry.QueryFormVo;
 import com.proxypool.service.BabyDictService;
 import com.proxypool.service.BabyNameService;
+import com.proxypool.util.CookieUtils;
+import com.proxypool.util.TextUtils;
 import net.sourceforge.pinyin4j.PinyinHelper;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -49,8 +53,10 @@ public class BabyNameController {
     @RequestMapping("/list")
     public String getBabyName(QueryFormVo queryFormVo, ModelMap modelMap, HttpServletRequest request, HttpServletResponse response) {
 
+        log.info("getBabyName() 查询条件=" + JSON.toJSONString(queryFormVo));
+
         // 查询
-        PageInfo<BabyNameInfo> data = babyNameService.getName(queryFormVo, request, response);
+        PageInfo<BabyNameInfo> data = babyNameService.queryName(queryFormVo, request, response);
         modelMap.addAttribute("data", data);
 
         // 设置显示内容
@@ -63,10 +69,21 @@ public class BabyNameController {
 
         modelMap.put("secondFilter", queryFormVo.getSecondFilter());
         modelMap.put("thirdFilter", queryFormVo.getThirdFilter());
-
+        modelMap.put("filter", TextUtils.getStringValue(queryFormVo.getFilter()));
         modelMap.put("name", queryFormVo.getName());
 
         return "bbn/index";
+    }
+
+    @RequestMapping("/selected/list")
+    public String selectedList(ModelMap modelMap,
+                               @RequestParam(required = false, defaultValue = "1") int page,
+                               @RequestParam(required = false, defaultValue = "100") int size) {
+
+        PageInfo<BabyNameInfo> data = babyNameService.querySelectedList(page, size);
+        modelMap.addAttribute("data", data);
+
+        return "bbn/selected_list";
     }
 
     /**
@@ -77,7 +94,7 @@ public class BabyNameController {
     @RequestMapping("/ajax/list")
     @ResponseBody
     public PageInfo<BabyNameInfo> ajaxQuery(QueryFormVo queryFormVo, HttpServletRequest request, HttpServletResponse response) {
-        return babyNameService.getName(queryFormVo, request, response);
+        return babyNameService.queryName(queryFormVo, request, response);
     }
 
     /**
@@ -121,7 +138,7 @@ public class BabyNameController {
      */
     @RequestMapping("/del")
     public ResultData del(int id) {
-        return babyNameService.updateStatus(id, "2");
+        return babyNameService.updateStatus(id, "0");
     }
 
     /**
@@ -148,6 +165,7 @@ public class BabyNameController {
 
         return name;
     }
+
 
 
 

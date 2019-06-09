@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta name="viewport" content="width=device-width,inital-scale=1.0,user-scalable=yes;">
-    <title>阿宝取名-预选</title>
+    <title>阿宝取名-备选</title>
     <script type="application/javascript" src="/js/jquery-3.3.1.min.js" charset="UTF-8"></script>
 </head>
 <style type="text/css">
@@ -93,7 +93,7 @@
     }
 
     .page-box {
-        width:30px;
+        width: 30px;
         height: 100%;
         text-decoration: none;
     }
@@ -119,48 +119,6 @@
 <body>
 
 <center>
-    <table class="navigation">
-        <tr>
-            <td><a href="/selected/list">备选列表</a></td>
-        </tr>
-    </table>
-    <form name="query" action="/list" method="post">
-        <input type="hidden" name="page" id="page" th:value="${data.pageNum}">
-        <input type="hidden" name="size" id="size" th:value="${data.pageSize}">
-        <input type="hidden" name="size" id="endPage" th:value="${data.pages}">
-
-        <table class="query-style">
-            <tr>
-                <td class="query-text">第二个字不包含：</td>
-            </tr>
-            <tr>
-                <td><input class="query-input" type="text" name="secondFilter" th:value="${secondFilter}">
-                </td>
-            </tr>
-            <tr>
-                <td class="query-text">第三个字不包含：</td>
-            </tr>
-            <tr>
-                <td><input class="query-input" type="text" name="thirdFilter" th:value="${thirdFilter}"></td>
-            </tr>
-            <tr>
-                <td class="query-text">过滤字：</td>
-            </tr>
-            <tr>
-                <td><input class="query-input" type="text" name="filter" th:value="${filter}"></td>
-            </tr>
-            <tr>
-                <td class="query-text">名字：</td>
-            </tr>
-            <tr>
-                <td><input class="query-input" type="text" name="name" th:value="${name}" size="30"></td>
-            </tr>
-            <tr>
-                <td align="right"><input type="submit" value="查询"></td>
-            </tr>
-        </table>
-    </form>
-    <hr style="border-color:#f58f98;border-top:2px;width: 100%;padding-left: 0px;padding-right: 0px;"/>
     <table class="content">
         <tbody id="content">
         <tr th:each="p, index : ${data.list}" th:id="@{'tr_' + ${p.id}}">
@@ -170,18 +128,13 @@
                 </a>
             </td>
 
-            <td th:if="${p.status == '1'}" class="interested">
-                <span th:text="${p.name}" style="font-weight: bolder;"/>&nbsp;&nbsp;&nbsp;&nbsp;[<span
-                    th:text="${p.pinYin}"/>]
-            </td>
-            <td th:if="${p.status == '0'}" class="normal">
+            <td class="interested">
                 <span th:text="${p.name}" style="font-weight: bolder;"/>&nbsp;&nbsp;&nbsp;&nbsp;[<span
                     th:text="${p.pinYin}"/>]
             </td>
 
             <td class="handle-style">
-                <a th:if="${p.status == '0'}" class="hand-style-a" href="javascript:" th:onclick="@{'add(' + ${p.id} + ')'}">加入</a>
-                <a th:if="${p.status == '1'}" class="hand-style-a" href="javascript:" th:onclick="@{'unadd(' + ${p.id} + ')'}">移出</a>
+                <a class="hand-style-a" href="javascript:" th:onclick="@{'unadd(' + ${p.id} + ')'}">移出</a>
             </td>
         </tr>
         </tbody>
@@ -190,8 +143,10 @@
     <table style="margin-bottom: 0px;height: 30px;text-align: center;margin-top: 30px;">
         <tbody id="pageContent" class="page-text">
         <tr>
-            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="pre();"><span class='page-box'>&lt;&lt;</span></a></td>
-            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="firstPage();">首页</a></td>
+            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="pre();"><span
+                    class='page-box'>&lt;&lt;</span></a></td>
+            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="firstPage();">首页</a>
+            </td>
             <td id="currPage" class="page-item">
                 <span th:text="${data.pageNum}"/> / <span th:text="${data.pages}"/>
             </td>
@@ -200,7 +155,8 @@
                 <a style="margin-left: 5px;text-decoration: none;" href="javascript:" onclick="next(2)">跳转</a>
             </td>
             <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="endPage();">末页</a></td>
-            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="next(1);"><span class='page-box'>&gt;&gt;</span></a></td>
+            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="next(1);"><span
+                    class='page-box'>&gt;&gt;</span></a></td>
         </tr>
         </tbody>
     </table>
@@ -241,17 +197,9 @@
             for (var index in data.list) {
                 var item = data.list[index];
                 content += "<tr id='tr_" + item.id + "'><td class='id-style' href='javascrip:' onclick='record(" + item.id + ")'>" + item.id + "</a></td>";
-                if (item.status == '1') {
-                    content += "<td class='interested'><span style='font-weight: bold;'>" + item.name + "</span>&nbsp;&nbsp;&nbsp;&nbsp;[" + item.pinYin + "]</td>";
-                } else {
-                    content += "<td class='normal'><span style='font-weight: bold;'>" + item.name + "</span>&nbsp;&nbsp;&nbsp;&nbsp;[" + item.pinYin + "]</td>";
-                }
+                content += "<td class='interested'><span style='font-weight: bold;'>" + item.name + "</span>&nbsp;&nbsp;&nbsp;&nbsp;[" + item.pinYin + "]</td>";
                 content += "<td class='handle-style'>";
-                if (item.status == '0') {
-                    content += "<a href=\"javascript:\" class='hand-style-a' onclick='add(" + item.id + ")'>加入</a>";
-                } else {
-                    content += "<a href=\"javascript:\" class='hand-style-a' onclick='unadd(" + item.id + ")'>移出</a>";
-                }
+                content += "<a href=\"javascript:\" class='hand-style-a' onclick='unadd(" + item.id + ")'>移出</a>";
                 content += "</td></tr>";
             }
 

@@ -297,6 +297,13 @@ public class TextUtils {
         return target.trim();
     }
 
+    public static String getStringValue(String value) {
+        if (StringUtils.isEmpty(value) || "null".equals(value)) {
+            return "";
+        }
+        return value;
+    }
+
 
 
 

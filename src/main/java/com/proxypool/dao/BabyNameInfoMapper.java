@@ -19,13 +19,10 @@ public interface BabyNameInfoMapper extends Mapper<BabyNameInfo> {
 
     List<BabyNameInfo> queryBy(BabyNameInfo babyNameInfo);
 
-    List<BabyNameInfo> multiQuery(@Param("secondList") List<String> secondList,
-                                  @Param("thirdList") List<String> thirdList,
-                                  @Param("name") String name,
-                                  @Param("start") int start,
-                                  @Param("size") int size
-    );
+    List<BabyNameInfo> multiQuery(@Param("queryFormVo") QueryFormVo queryFormVo);
 
-    int multiQueryCount(QueryFormVo queryFormVo);
+    int multiQueryCount(@Param("queryFormVo") QueryFormVo queryFormVo);
+
+    List<BabyNameInfo> querySelected();
 
 }

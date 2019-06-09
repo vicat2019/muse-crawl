@@ -12,10 +12,13 @@ public interface BabyNameService {
 
     ResultData genName();
 
-    PageInfo<BabyNameInfo> getName(QueryFormVo queryFormVo, HttpServletRequest request, HttpServletResponse response);
+    PageInfo<BabyNameInfo> queryName(QueryFormVo queryFormVo, HttpServletRequest request, HttpServletResponse response);
 
     ResultData updateStatus(int id, String status);
 
     BabyNameInfo getById(Integer id);
+
+    PageInfo<BabyNameInfo> querySelectedList(int page, int size);
+
 
 }
