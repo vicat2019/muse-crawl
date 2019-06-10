@@ -45,6 +45,7 @@
         <where>
             <include refid="condition"/>
         </where>
+        order by id
         limit #{queryFormVo.start}, #{queryFormVo.size}
     </select>
 
@@ -92,6 +93,15 @@
         where
         status = "1"
         order by id
+    </select>
+
+    <select id="getMatchCount" resultType="int">
+        select count(1) as total from <include refid="table_name"/>
+        <where>
+            <include refid="condition"/>
+            and
+            <![CDATA[ id < #{queryFormVo.startRecordId} ]]>
+        </where>
     </select>
 
 

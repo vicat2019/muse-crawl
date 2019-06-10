@@ -20,9 +20,13 @@ public class QueryFormVo implements Serializable {
 
     private int page = 0;
 
+    private int cookiePage = 0;
+
     private int size = PAGE_SIZE;
 
     private int start;
+
+    private int startRecordId;
 
     private List<String> secondFilterList;
 
@@ -129,5 +133,21 @@ public class QueryFormVo implements Serializable {
 
     public void setFilterList(List<String> filterList) {
         this.filterList = filterList;
+    }
+
+    public int getStartRecordId() {
+        return startRecordId;
+    }
+
+    public void setStartRecordId(int startRecordId) {
+        this.startRecordId = startRecordId;
+    }
+
+    public int getCookiePage() {
+        return cookiePage;
+    }
+
+    public void setCookiePage(int cookiePage) {
+        this.cookiePage = cookiePage;
     }
 }

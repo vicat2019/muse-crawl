@@ -19,6 +19,7 @@
         width: 100%;
         color: #696969;
         font-size: 16px;
+        border-spacing: 0;
     }
 
     table.content tr {
@@ -34,6 +35,10 @@
     }
 
     .id-style {
+        width: 10%
+    }
+    .record {
+        background-color: #d3d7d4;
         width: 10%
     }
 
@@ -164,7 +169,12 @@
     <table class="content">
         <tbody id="content">
         <tr th:each="p, index : ${data.list}" th:id="@{'tr_' + ${p.id}}">
-            <td class="id-style">
+            <td class="record" th:if="${p.beRecord}">
+                <a href="javascript:" th:onclick="@{'record(' + ${p.id} + ')'}" class="normal">
+                    <span th:text="${p.id}"></span>
+                </a>
+            </td>
+            <td class="id-style" th:if="${!p.beRecord}">
                 <a href="javascript:" th:onclick="@{'record(' + ${p.id} + ')'}" class="normal">
                     <span th:text="${p.id}"></span>
                 </a>
@@ -240,11 +250,18 @@
             var content = "";
             for (var index in data.list) {
                 var item = data.list[index];
-                content += "<tr id='tr_" + item.id + "'><td class='id-style' href='javascrip:' onclick='record(" + item.id + ")'>" + item.id + "</a></td>";
+                content += "<tr id='tr_" + item.id + "'>";
+                if (item.beRecord) {
+                    content += "<td class='record' href='javascrip:' onclick='record(" + item.id + ")'>" + item.id + "</a></td>";
+                } else {
+                    content += "<td class='id-style' href='javascrip:' onclick='record(" + item.id + ")'>" + item.id + "</a></td>";
+                }
                 if (item.status == '1') {
                     content += "<td class='interested'><span style='font-weight: bold;'>" + item.name + "</span>&nbsp;&nbsp;&nbsp;&nbsp;[" + item.pinYin + "]</td>";
-                } else {
+                } else if (item.status == '0') {
                     content += "<td class='normal'><span style='font-weight: bold;'>" + item.name + "</span>&nbsp;&nbsp;&nbsp;&nbsp;[" + item.pinYin + "]</td>";
+                } else if (item.status == '3') {
+                    content += "<td class='record'><span style='font-weight: bold;'>" + item.name + "</span>&nbsp;&nbsp;&nbsp;&nbsp;[" + item.pinYin + "]</td>";
                 }
                 content += "<td class='handle-style'>";
                 if (item.status == '0') {

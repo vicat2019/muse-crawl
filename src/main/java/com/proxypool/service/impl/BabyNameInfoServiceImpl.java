@@ -52,6 +52,10 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
     // 循环次数
     private static final int loopCount = 10000000;
 
+    private static String secondFilter;
+    private static String thirdFilter;
+    private static String filter;
+
 
     @Override
     public ResultData genName() {
@@ -113,12 +117,18 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
 
         // 查询总数
         int totalCount = mapper.multiQueryCount(queryFormVo);
+
         // 计算分页信息
         int pageCount = (totalCount % queryFormVo.getSize() == 0) ? totalCount / queryFormVo.getSize() : (totalCount / queryFormVo.getSize() + 1);
 
         // 生成拼音
         if (!CollectionUtils.isEmpty(dataList)) {
-            dataList.forEach(item -> item.setPinYin(getPinYin(item.getName())));
+            dataList.forEach(item -> {
+                // 生成拼音
+                item.setPinYin(getPinYin(item.getName()));
+                // 是被记录的数据
+                item.setBeRecord(item.getId() == queryFormVo.getStartRecordId());
+            });
         }
 
         // 存储查询条件
@@ -150,9 +160,40 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
             queryFormVo.setFilter(Joiner.on("").join(queryFormVo.getFilterList()));
         }
 
+        // 记录ID
+        String recordStr = babyDictService.getValueByName("baba_record");
+        if (NumberUtils.isDigits(recordStr)) {
+            queryFormVo.setStartRecordId(Integer.parseInt(recordStr));
+        }
+
+        // 计算页数
+        // 超过一页
+        if (queryFormVo.getPage() == 0 || isChange(queryFormVo)) {
+            // 优先显示记录ID所在页
+            if (queryFormVo.getStartRecordId() != 0) {
+                // 计算过滤后记录的数据在哪一页数据内
+                int count = mapper.getMatchCount(queryFormVo);
+                log.info("查询小于" + queryFormVo.getStartRecordId() + "的记录数=" + count);
+
+                int pageNum = count / queryFormVo.getSize() + 1;
+                queryFormVo.setPage(pageNum);
+
+                log.info("计算出记录的id所在的页码=" + pageNum);
+
+            } else {
+                // 再显示Cookie记录页
+                queryFormVo.setPage(queryFormVo.getCookiePage());
+            }
+        }
+
         // 计算数量
         int start = (queryFormVo.getPage() - 1) * queryFormVo.getSize();
         queryFormVo.setStart(start);
+    }
+
+    private boolean isChange(QueryFormVo queryFormVo) {
+        return !queryFormVo.getSecondFilter().equals(secondFilter) || !queryFormVo.getThirdFilter().equals(thirdFilter) ||
+                !queryFormVo.getFilter().equals(filter);
     }
 
     /**
@@ -283,13 +324,11 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
         log.info("getDataFromCookie() filter=" + queryFormVo.getFilter());
 
         // Cookie中的页码
-        if (queryFormVo.getPage() == 0) {
-            String page = CookieUtils.getCookie(request, "page");
-            if (NumberUtils.isDigits(page)) {
-                queryFormVo.setPage(Integer.parseInt(page));
-            } else {
-                queryFormVo.setPage(1);
-            }
+        String page = CookieUtils.getCookie(request, "page");
+        if (NumberUtils.isDigits(page)) {
+            queryFormVo.setCookiePage(Integer.parseInt(page));
+        } else {
+            queryFormVo.setCookiePage(1);
         }
 
         // 每页记录数
@@ -335,28 +374,6 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
         PageInfo<BabyNameInfo> pageInfo = new PageInfo<>(dataList);
         return pageInfo;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

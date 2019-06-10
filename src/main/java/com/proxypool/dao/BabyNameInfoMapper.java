@@ -23,6 +23,8 @@ public interface BabyNameInfoMapper extends Mapper<BabyNameInfo> {
 
     int multiQueryCount(@Param("queryFormVo") QueryFormVo queryFormVo);
 
+    int getMatchCount(@Param("queryFormVo") QueryFormVo queryFormVo);
+
     List<BabyNameInfo> querySelected();
 
 }
