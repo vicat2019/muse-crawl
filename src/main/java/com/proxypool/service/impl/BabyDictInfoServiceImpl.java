@@ -66,11 +66,9 @@ public class BabyDictInfoServiceImpl extends BaseService<BabyDictInfoMapper, Bab
             return ResultData.getErrResult("参数异常");
         }
 
-        String name = type==1?"baba_record":"mama_record";
-
         // 设置值
         Example example = new Example(BabyDictInfo.class);
-        example.createCriteria().andEqualTo("name", "baba_record");
+        example.createCriteria().andEqualTo("name", "record");
 
         BabyDictInfo babyDictInfo = new BabyDictInfo();
         babyDictInfo.setValue(String.valueOf(id));

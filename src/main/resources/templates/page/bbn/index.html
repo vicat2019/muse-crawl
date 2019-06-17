@@ -141,7 +141,7 @@
                 <td class="query-text">过滤字：</td>
             </tr>
             <tr>
-                <td><textarea cols="20" role="50" class="query-input" type="text" id="filter" name="filter"
+                <td><textarea cols="20" role="50" class="query-input" type="text" style="height: 120px;" id="filter" name="filter"
                               th:text="${filter}"></textarea></td>
             </tr>
             <tr>
@@ -239,7 +239,9 @@
     function refresh(page, size) {
         console.log("page=" + page + ", size=" + size);
 
-        $.get("/ajax/list?page=" + page + "&size=" + size, function (data) {
+        var filter = $("#filter").val();
+
+        $.get("/ajax/list?filter=" + filter + "&page=" + page + "&size=" + size, function (data) {
             console.log(data);
 
             var content = "";
