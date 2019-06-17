@@ -60,15 +60,13 @@ public class BabyNameController {
         modelMap.addAttribute("data", data);
 
         // 设置显示内容
-        String recordIdStr = babyDictService.getValueByName("baba_record");
+        String recordIdStr = babyDictService.getValueByName("record");
         if (!StringUtils.isEmpty(recordIdStr)) {
             modelMap.addAttribute("record", Integer.valueOf(recordIdStr));
         } else {
-            modelMap.addAttribute("baba_record", 0);
+            modelMap.addAttribute("record", 0);
         }
 
-        modelMap.put("secondFilter", queryFormVo.getSecondFilter());
-        modelMap.put("thirdFilter", queryFormVo.getThirdFilter());
         modelMap.put("filter", TextUtils.getStringValue(queryFormVo.getFilter()));
         modelMap.put("name", queryFormVo.getName());
 

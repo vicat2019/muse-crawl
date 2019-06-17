@@ -60,18 +60,6 @@
 
     <!-- 查询条件 -->
     <sql id="condition">
-        <if test="queryFormVo.secondFilterList!=null and queryFormVo.secondFilterList.size!=0">
-            AND SUBSTRING(NAME, 2, 1) NOT IN
-            <foreach collection="queryFormVo.secondFilterList" item="alpha" close=")" separator="," open="(">
-                #{alpha}
-            </foreach>
-        </if>
-        <if test="queryFormVo.thirdFilterList!=null and queryFormVo.thirdFilterList.size!=0">
-            AND SUBSTRING(NAME, 3, 1) NOT IN
-            <foreach collection="queryFormVo.thirdFilterList" item="alpha" close=")" separator="," open="(">
-                #{alpha}
-            </foreach>
-        </if>
         <if test="queryFormVo.filterList!=null and queryFormVo.filterList.size!=0">
             AND (SUBSTRING(NAME, 2, 1) NOT IN
             <foreach collection="queryFormVo.filterList" item="alpha" close=")" separator="," open="(">
@@ -85,13 +73,14 @@
         <if test="queryFormVo.name!=null and queryFormVo.name!=''">
             AND name LIKE CONCAT('%',#{queryFormVo.name},'%')
         </if>
+        AND status != 3
     </sql>
 
 
     <select id="querySelected" resultMap="BaseResultMap">
         select <include refid="Base_Column_List" /> from <include refid="table_name"/>
         where
-        status = "1"
+        status = '1'
         order by id
     </select>
 

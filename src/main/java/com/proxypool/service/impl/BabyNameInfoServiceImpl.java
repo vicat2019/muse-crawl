@@ -52,11 +52,6 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
     // 循环次数
     private static final int loopCount = 10000000;
 
-    private static String secondFilter;
-    private static String thirdFilter;
-    private static String filter;
-
-
     @Override
     public ResultData genName() {
         // 生成名字
@@ -87,7 +82,7 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
         Set<String> nameSet = Sets.newHashSet();
 
         String firstName = babyDictService.getValueByName("firstName");
-        String nameSource = babyDictService.getValueByName("nameSource2");
+        String nameSource = babyDictService.getValueByName("nameSource");
 
         for (int i = 0; i < loopCount; i++) {
             nameSet.add(GenRandomPersonInfo.getChineseName(firstName, nameSource));
@@ -117,10 +112,8 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
 
         // 查询总数
         int totalCount = mapper.multiQueryCount(queryFormVo);
-
         // 计算分页信息
         int pageCount = (totalCount % queryFormVo.getSize() == 0) ? totalCount / queryFormVo.getSize() : (totalCount / queryFormVo.getSize() + 1);
-
         // 生成拼音
         if (!CollectionUtils.isEmpty(dataList)) {
             dataList.forEach(item -> {
@@ -135,8 +128,7 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
         storeParam(response, queryFormVo);
 
         // 返回结果
-        PageInfo<BabyNameInfo> pageInfo = genPageInfo(dataList, queryFormVo.getPage(), queryFormVo.getSize(), totalCount, pageCount);
-        return pageInfo;
+        return genPageInfo(dataList, queryFormVo.getPage(), queryFormVo.getSize(), totalCount, pageCount);
     }
 
     /**
@@ -145,30 +137,16 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
      * @param queryFormVo 请求参数
      */
     private void handleQueryParam(QueryFormVo queryFormVo) {
-        // 过滤条件
-        queryFormVo.setSecondFilterList(queryFormVo.convertToList(queryFormVo.getSecondFilter()));
-        queryFormVo.setThirdFilterList(queryFormVo.convertToList(queryFormVo.getThirdFilter()));
-        queryFormVo.setFilterList(queryFormVo.convertToList(queryFormVo.getFilter()));
-
-        int originCount = queryFormVo.getFilterList().size();
-
-        // 检查是否有重复
-        queryFormVo.getFilterList().removeIf(filterItem -> queryFormVo.getSecondFilterList().contains(filterItem)
-                || queryFormVo.getThirdFilterList().contains(filterItem));
-
-        if (queryFormVo.getFilterList().size() != originCount) {
-            queryFormVo.setFilter(Joiner.on("").join(queryFormVo.getFilterList()));
-        }
 
         // 记录ID
-        String recordStr = babyDictService.getValueByName("baba_record");
+        String recordStr = babyDictService.getValueByName("record");
         if (NumberUtils.isDigits(recordStr)) {
             queryFormVo.setStartRecordId(Integer.parseInt(recordStr));
+        } else {
+            queryFormVo.setStartRecordId(0);
         }
 
-        // 计算页数
-        // 超过一页
-        if (queryFormVo.getPage() == 0 || isChange(queryFormVo)) {
+        if (queryFormVo.getPage() == 0) {
             // 优先显示记录ID所在页
             if (queryFormVo.getStartRecordId() != 0) {
                 // 计算过滤后记录的数据在哪一页数据内
@@ -189,11 +167,6 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
         // 计算数量
         int start = (queryFormVo.getPage() - 1) * queryFormVo.getSize();
         queryFormVo.setStart(start);
-    }
-
-    private boolean isChange(QueryFormVo queryFormVo) {
-        return !queryFormVo.getSecondFilter().equals(secondFilter) || !queryFormVo.getThirdFilter().equals(thirdFilter) ||
-                !queryFormVo.getFilter().equals(filter);
     }
 
     /**
@@ -270,17 +243,13 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
      * @param queryFormVo 查询数据
      */
     private void storeParam(HttpServletResponse response, QueryFormVo queryFormVo) {
-        // 第二个字过滤
-        CookieUtils.writeCookie(response, "secondFilter", TextUtils.getStringValue(queryFormVo.getSecondFilter()));
-        // 第三个字过滤
-        CookieUtils.writeCookie(response, "thirdFilter", TextUtils.getStringValue(queryFormVo.getThirdFilter()));
-        // 过滤
-        CookieUtils.writeCookie(response, "filter", TextUtils.getStringValue(queryFormVo.getFilter()));
-
         // 页码
         CookieUtils.writeCookie(response, "page", String.valueOf(queryFormVo.getPage()));
         // 每页记录数
         CookieUtils.writeCookie(response, "size", String.valueOf(queryFormVo.getSize()));
+
+        // 更新过滤字
+        log.info("更新查询过滤字=" + babyDictService.updateFilter("filter", queryFormVo.getFilter()));
     }
 
     /**
@@ -290,37 +259,22 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
      * @param request     请求对象
      */
     public void getDataFromCookie(QueryFormVo queryFormVo, HttpServletRequest request) {
-        // 第二个字过滤信息
-        if (StringUtils.isEmpty(queryFormVo.getSecondFilter())) {
-            String secondFilter = CookieUtils.getCookie(request, "secondFilter");
-            if (StringUtils.isEmpty(secondFilter)) {
-                queryFormVo.setSecondFilter(babyDictService.getValueByName("secondFilter"));
-            } else {
-                queryFormVo.setSecondFilter(secondFilter);
-            }
-        }
-        log.info("getDataFromCookie() secondFilter=" + queryFormVo.getSecondFilter());
-
-        // 第三个字过滤信息
-        if (StringUtils.isEmpty(queryFormVo.getThirdFilter())) {
-            String thirdFilter = CookieUtils.getCookie(request, "thirdFilter");
-            if (StringUtils.isEmpty(thirdFilter)) {
-                queryFormVo.setThirdFilter(babyDictService.getValueByName("thirdFilter"));
-            } else {
-                queryFormVo.setThirdFilter(thirdFilter);
-            }
-        }
-        log.info("getDataFromCookie() thirdFilter=" + queryFormVo.getThirdFilter());
-
         // filter
+        String totalFilter;
+        // 库中的过滤条件
         if (StringUtils.isEmpty(queryFormVo.getFilter())) {
-            String filter = CookieUtils.getCookie(request, "filter");
-            if (StringUtils.isEmpty(filter)) {
-                queryFormVo.setFilter(babyDictService.getValueByName("filter"));
-            } else {
-                queryFormVo.setFilter(filter);
-            }
+            totalFilter = babyDictService.getValueByName("filter");
+        } else {
+            totalFilter = queryFormVo.getFilter();
         }
+
+        // 去重
+        Set<String> filterSet = Sets.newHashSet();
+        for (int i=0;i<totalFilter.length();i++) {
+            filterSet.add(String.valueOf(totalFilter.charAt(i)));
+        }
+        queryFormVo.setFilter(Joiner.on("").join(filterSet));
+        queryFormVo.setFilterList(Lists.newArrayList(filterSet));
         log.info("getDataFromCookie() filter=" + queryFormVo.getFilter());
 
         // Cookie中的页码

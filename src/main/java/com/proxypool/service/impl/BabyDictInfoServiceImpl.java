@@ -8,6 +8,7 @@ import com.proxypool.base.ResultData;
 import com.proxypool.dao.BabyDictInfoMapper;
 import com.proxypool.entry.BabyDictInfo;
 import com.proxypool.service.BabyDictService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -51,22 +52,7 @@ public class BabyDictInfoServiceImpl extends BaseService<BabyDictInfoMapper, Bab
 
     @Override
     public ResultData updateFilter(String type, String filter) {
-        String name = "";
-        if (type.equals("2")) {
-            name = "secondFilter";
-        } else if (type.equals("3")) {
-            name = "thirdFilter";
-        }
-
-        String allFilter = getValueByName(name) + filter;
-        Set<Character> filterSet = Sets.newHashSet();
-        for (int i = 0; i < allFilter.length(); i++) {
-            filterSet.add(allFilter.charAt(i));
-        }
-
-        String newFilter = Joiner.on("").join(filterSet.iterator());
-        int count = mapper.addFilter(name, newFilter);
-
+        int count = mapper.addFilter("filter", filter);
         if (count > 0) {
             return ResultData.getSuccessResult();
         } else {

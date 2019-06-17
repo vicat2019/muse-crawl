@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width,inital-scale=1.0,user-scalable=yes;">
     <title>阿宝取名-预选</title>
     <script type="application/javascript" src="/js/jquery-3.3.1.min.js" charset="UTF-8"></script>
+    <script type="application/javascript" src="/layui/layui.all.js" charset="UTF-8"></script>
 </head>
 <style type="text/css">
 
@@ -37,6 +38,7 @@
     .id-style {
         width: 10%
     }
+
     .record {
         background-color: #d3d7d4;
         width: 10%
@@ -98,7 +100,7 @@
     }
 
     .page-box {
-        width:30px;
+        width: 30px;
         height: 100%;
         text-decoration: none;
     }
@@ -136,23 +138,11 @@
 
         <table class="query-style">
             <tr>
-                <td class="query-text">第二个字不包含：</td>
-            </tr>
-            <tr>
-                <td><input class="query-input" type="text" name="secondFilter" th:value="${secondFilter}">
-                </td>
-            </tr>
-            <tr>
-                <td class="query-text">第三个字不包含：</td>
-            </tr>
-            <tr>
-                <td><input class="query-input" type="text" name="thirdFilter" th:value="${thirdFilter}"></td>
-            </tr>
-            <tr>
                 <td class="query-text">过滤字：</td>
             </tr>
             <tr>
-                <td><input class="query-input" type="text" name="filter" th:value="${filter}"></td>
+                <td><textarea cols="20" role="50" class="query-input" type="text" id="filter" name="filter"
+                              th:text="${filter}"></textarea></td>
             </tr>
             <tr>
                 <td class="query-text">名字：</td>
@@ -181,17 +171,19 @@
             </td>
 
             <td th:if="${p.status == '1'}" class="interested">
-                <span th:text="${p.name}" style="font-weight: bolder;"/>&nbsp;&nbsp;&nbsp;&nbsp;[<span
+                <span th:text="${p.name}" style="font-weight: bolder;" />&nbsp;&nbsp;&nbsp;&nbsp;[<span
                     th:text="${p.pinYin}"/>]
             </td>
             <td th:if="${p.status == '0'}" class="normal">
-                <span th:text="${p.name}" style="font-weight: bolder;"/>&nbsp;&nbsp;&nbsp;&nbsp;[<span
-                    th:text="${p.pinYin}"/>]
+                <span th:text="${p.name}" style="font-weight: bolder;" th:onclick="@{'show(\'' + ${p.name} + '\', 1)'}"/>&nbsp;&nbsp;&nbsp;&nbsp;[<span
+                    th:text="${p.pinYin}" th:onclick="@{'show(\'' + ${p.name} + '\', 2)'}"/>]
             </td>
 
             <td class="handle-style">
-                <a th:if="${p.status == '0'}" class="hand-style-a" href="javascript:" th:onclick="@{'add(' + ${p.id} + ')'}">加入</a>
-                <a th:if="${p.status == '1'}" class="hand-style-a" href="javascript:" th:onclick="@{'unadd(' + ${p.id} + ')'}">移出</a>
+                <a th:if="${p.status == '0'}" class="hand-style-a" href="javascript:"
+                   th:onclick="@{'add(' + ${p.id} + ')'}">加入</a>
+                <a th:if="${p.status == '1'}" class="hand-style-a" href="javascript:"
+                   th:onclick="@{'unadd(' + ${p.id} + ')'}">移出</a>
             </td>
         </tr>
         </tbody>
@@ -200,8 +192,10 @@
     <table style="margin-bottom: 0px;height: 30px;text-align: center;margin-top: 30px;">
         <tbody id="pageContent" class="page-text">
         <tr>
-            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="pre();"><span class='page-box'>&lt;&lt;</span></a></td>
-            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="firstPage();">首页</a></td>
+            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="pre();"><span
+                    class='page-box'>&lt;&lt;</span></a></td>
+            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="firstPage();">首页</a>
+            </td>
             <td id="currPage" class="page-item">
                 <span th:text="${data.pageNum}"/> / <span th:text="${data.pages}"/>
             </td>
@@ -210,7 +204,8 @@
                 <a style="margin-left: 5px;text-decoration: none;" href="javascript:" onclick="next(2)">跳转</a>
             </td>
             <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="endPage();">末页</a></td>
-            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="next(1);"><span class='page-box'>&gt;&gt;</span></a></td>
+            <td class="page-item"><a style="text-decoration: none;" href="javascript:" onclick="next(1);"><span
+                    class='page-box'>&gt;&gt;</span></a></td>
         </tr>
         </tbody>
     </table>
@@ -363,6 +358,19 @@
 
         $("#pageContent").empty();
         $("#pageContent").html(pageContent);
+    }
+
+
+    function show(name, index) {
+        var letter = name[index];
+        layer.msg('将[ ' + letter + ' ]添加到过滤框吗？', {
+            time: 0
+            , btn: ['确定', '取消']
+            , yes: function (index) {
+                layer.close(index);
+                $("#filter").val($("#filter").val() + letter);
+            }
+        });
     }
 
 
