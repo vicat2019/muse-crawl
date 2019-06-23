@@ -124,6 +124,19 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
             });
         }
 
+        // 显示记录的ID
+        if (queryFormVo.isFirstIn()) {
+            int recordId = queryFormVo.getStartRecordId();
+            if (recordId != 0) {
+                for (BabyNameInfo item : dataList) {
+                    if (recordId <= item.getId()) {
+                        item.setBeRecord(true);
+                        break;
+                    }
+                }
+            }
+        }
+
         // 存储查询条件
         storeParam(response, queryFormVo);
 
@@ -147,6 +160,8 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
         }
 
         if (queryFormVo.getPage() == 0) {
+            queryFormVo.setFirstIn(true);
+
             // 优先显示记录ID所在页
             if (queryFormVo.getStartRecordId() != 0) {
                 // 计算过滤后记录的数据在哪一页数据内
@@ -162,6 +177,8 @@ public class BabyNameInfoServiceImpl extends BaseService<BabyNameInfoMapper, Bab
                 // 再显示Cookie记录页
                 queryFormVo.setPage(queryFormVo.getCookiePage());
             }
+        } else {
+            queryFormVo.setFirstIn(false);
         }
 
         // 计算数量

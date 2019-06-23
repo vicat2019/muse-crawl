@@ -35,6 +35,9 @@ public class QueryFormVo implements Serializable {
     private List<String> filterList;
 
 
+    private boolean firstIn;
+
+
     /**
      * 转换成集合
      *
@@ -149,5 +152,13 @@ public class QueryFormVo implements Serializable {
 
     public void setCookiePage(int cookiePage) {
         this.cookiePage = cookiePage;
+    }
+
+    public void setFirstIn(boolean firstIn) {
+        this.firstIn = firstIn;
+    }
+
+    public boolean isFirstIn() {
+        return firstIn;
     }
 }

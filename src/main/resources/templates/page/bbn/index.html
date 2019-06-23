@@ -159,22 +159,22 @@
     <table class="content">
         <tbody id="content">
         <tr th:each="p, index : ${data.list}" th:id="@{'tr_' + ${p.id}}">
-            <td class="record" th:if="${p.beRecord}">
+            <td class="record" th:if="${p.beRecord}" th:id="@{'index_' + ${p.id}}">
                 <a href="javascript:" th:onclick="@{'record(' + ${p.id} + ')'}" class="normal">
                     <span th:text="${p.id}"></span>
                 </a>
             </td>
-            <td class="id-style" th:if="${!p.beRecord}">
+            <td class="id-style" th:if="${!p.beRecord}" th:id="@{'index_' + ${p.id}}">
                 <a href="javascript:" th:onclick="@{'record(' + ${p.id} + ')'}" class="normal">
                     <span th:text="${p.id}"></span>
                 </a>
             </td>
 
-            <td th:if="${p.status == '1'}" class="interested">
+            <td th:if="${p.status == '1'}" class="interested" th:id="@{'name_' + ${p.id}}">
                 <span th:text="${p.name}" style="font-weight: bolder;" />&nbsp;&nbsp;&nbsp;&nbsp;[<span
                     th:text="${p.pinYin}"/>]
             </td>
-            <td th:if="${p.status == '0'}" class="normal">
+            <td th:if="${p.status == '0'}" class="normal"th:id="@{'name_' + ${p.id}}">
                 <span th:text="${p.name}" style="font-weight: bolder;" th:onclick="@{'show(\'' + ${p.name} + '\', 1)'}"/>&nbsp;&nbsp;&nbsp;&nbsp;[<span
                     th:text="${p.pinYin}" th:onclick="@{'show(\'' + ${p.name} + '\', 2)'}"/>]
             </td>
@@ -220,7 +220,9 @@
         $.get("/interested?id=" + id, function (data) {
             var page = $("#page").val();
             var size = $("#size").val();
-            refresh(page, size);
+
+            $("#name_" + id).removeClass("normal");
+            $("#name_" + id).addClass("interested");
 
             alert("成功加入备选");
         });
@@ -232,16 +234,20 @@
             var size = $("#size").val();
             refresh(page, size);
 
+            $("#name_" + id).removeClass("interested");
+            $("#name_" + id).addClass("normal");
+
             alert("成功移出备选");
         });
     }
 
     function refresh(page, size) {
-        console.log("page=" + page + ", size=" + size);
 
         var filter = $("#filter").val();
+        console.log("page=" + page + ", size=" + size + ", filter=" + filter);
 
-        $.get("/ajax/list?filter=" + filter + "&page=" + page + "&size=" + size, function (data) {
+        var param = {"filter": filter, "page": page, "size": size};
+        $.post("/ajax/list", param, function (data) {
             console.log(data);
 
             var content = "";
@@ -249,16 +255,16 @@
                 var item = data.list[index];
                 content += "<tr id='tr_" + item.id + "'>";
                 if (item.beRecord) {
-                    content += "<td class='record' href='javascrip:' onclick='record(" + item.id + ")'>" + item.id + "</a></td>";
+                    content += "<td id='index_" + item.id + "' class='record' href='javascrip:' onclick='record(" + item.id + ")'>" + item.id + "</a></td>";
                 } else {
-                    content += "<td class='id-style' href='javascrip:' onclick='record(" + item.id + ")'>" + item.id + "</a></td>";
+                    content += "<td id='index_" + item.id + "' class='id-style' href='javascrip:' onclick='record(" + item.id + ")'>" + item.id + "</a></td>";
                 }
                 if (item.status == '1') {
-                    content += "<td class='interested'><span style='font-weight: bold;'>" + item.name + "</span>&nbsp;&nbsp;&nbsp;&nbsp;[" + item.pinYin + "]</td>";
+                    content += "<td id='name_" + item.id + "' class='interested'><span style='font-weight: bold;' onclick='show(\'" + item.name + "\', 1)'>" + item.name + "</td>&nbsp;&nbsp;&nbsp;&nbsp;<span onclick='show(\'" + item.name + "\', 2)'>[" + item.pinYin + "]</span></td>";
                 } else if (item.status == '0') {
-                    content += "<td class='normal'><span style='font-weight: bold;'>" + item.name + "</span>&nbsp;&nbsp;&nbsp;&nbsp;[" + item.pinYin + "]</td>";
+                    content += "<td id='name_" + item.id + "' class='normal'><span style='font-weight: bold;' onclick='show(\'" + item.name + "\', 1)'>" + item.name + "</span>&nbsp;&nbsp;&nbsp;&nbsp;<span onclick='show(\'" + item.name + "\', 2)'>[" + item.pinYin + "]</span></td>";
                 } else if (item.status == '3') {
-                    content += "<td class='record'><span style='font-weight: bold;'>" + item.name + "</span>&nbsp;&nbsp;&nbsp;&nbsp;[" + item.pinYin + "]</td>";
+                    content += "<td id='name_" + item.id + "' class='record'><span style='font-weight: bold;' onclick='show(\'" + item.name + "\', 1)'>" + item.name + "</span>&nbsp;&nbsp;&nbsp;&nbsp;<span onclick='show(\'" + item.name + "\', 2)'>[" + item.pinYin + "]</span></td>";
                 }
                 content += "<td class='handle-style'>";
                 if (item.status == '0') {
@@ -285,12 +291,15 @@
     function record(id) {
         $.get("/ajax/record/" + id, function (data) {
             console.log(data);
+
+            $("#index_*").removeClass("record");
+            $("#index_*").addClass("id-style");
+
+            $("#index_" + id).removeClass("id-style");
+            $("#index_" + id).addClass("record");
+
             alert(data.message);
         });
-
-        var page = $("#page").val();
-        var size = $("#size").val();
-        refresh(page, size);
     }
 
     function next(type) {
