@@ -137,5 +137,17 @@
         order by id desc
     </select>
 
+    <select id="getTodayCount" resultType="int">
+        select count(1) as total from
+        <include refid="table_name"/>
+        where
+        left(create_time, 10)=left(now(), 10)
+    </select>
+
+    <select id="getCount" resultType="int">
+        select count(1) as total from
+        <include refid="table_name"/>
+    </select>
+
 
 </mapper>

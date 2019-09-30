@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.List;
 import java.util.Map;
@@ -37,9 +38,9 @@ public class MeBookServiceImpl extends BaseService<MeBookInfoMapper, MeBookInfo>
     @Override
     public ResultData insert(MeBookInfo bookInfo) throws Exception {
         log.info("insert() 保存电子书信息：" + ((bookInfo != null) ? bookInfo : "null"));
-        if (bookInfo == null || !bookInfo.canSave()) {
-            return ResultData.getErrResult("参数异常");
-        }
+//        if (bookInfo == null || !bookInfo.canSave()) {
+//            return ResultData.getErrResult("参数异常");
+//        }
 
         // 保存到库中
         int count = mapper.insertOrUpdate(bookInfo);
@@ -135,6 +136,14 @@ public class MeBookServiceImpl extends BaseService<MeBookInfoMapper, MeBookInfo>
     @Override
     public int getCountByCode(int code) throws Exception {
         return mapper.getCountByCode(code);
+    }
+
+    public int getCount() {
+        return mapper.getCount();
+    }
+
+    public int getTodayCount() {
+        return mapper.getTodayCount();
     }
 
 

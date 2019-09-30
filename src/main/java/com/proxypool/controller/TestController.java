@@ -137,7 +137,7 @@ public class TestController {
     @RequestMapping("/kdlbook")
     public void kdlbook() {
         try {
-            kdlBookProcessor.setInterval(800).setThreadCount(3).execute(meBookPipeline, null);
+            kdlBookProcessor.setInterval(1000).setThreadCount(1).execute(meBookPipeline, null);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -70,5 +70,7 @@ public interface MeBookService {
      */
     ResultData queryBook(String title, String author, String category, String descr, String source, int pageNum, int pageSize) throws Exception;
 
+    int getCount();
 
+    int getTodayCount();
 }

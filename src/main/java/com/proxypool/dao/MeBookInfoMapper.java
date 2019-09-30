@@ -67,4 +67,8 @@ public interface MeBookInfoMapper {
      * @return List
      */
     List<MeBookInfo> queryMeBook(Map<String, Object> params);
+
+    int getCount();
+
+    int getTodayCount();
 }

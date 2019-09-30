@@ -74,7 +74,7 @@ public abstract class ProcessorTemplate<T extends BaseEntityInfo> implements Pag
 
         // 过滤为空的内容
         if (resultItemList != null && resultItemList.size() > 0) {
-            resultItemList = resultItemList.stream().filter(BaseEntityInfo::legitimate).collect(Collectors.toList());
+            // resultItemList = resultItemList.stream().filter(BaseEntityInfo::legitimate).collect(Collectors.toList());
             if (resultItemList != null && resultItemList.size() > 0) {
                 page.putField("result", resultItemList);
             }
