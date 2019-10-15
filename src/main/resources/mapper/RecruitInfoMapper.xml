@@ -230,4 +230,13 @@
     </update>
 
 
+    <select id="getCount" resultType="int">
+        select count(1) as total from <include refid="Table_Name"/>
+    </select>
+
+    <select id="getTodayCount" resultType="int">
+        select count(1) as total from <include refid="Table_Name"/> where left(create_time, 10) = left(now(), 10)
+    </select>
+
+
 </mapper>

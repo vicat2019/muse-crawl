@@ -166,7 +166,7 @@ public class TestController {
     public void testRecurite() {
         try {
             // 处理页面的时间间隔
-            proxy51jobProcessor.setInterval(700).setThreadCount(5);
+            proxy51jobProcessor.setInterval(1000).setThreadCount(1);
             proxy51jobProcessor.execute(recruitInfoPipelinel, false);
         } catch (Exception e) {
             e.printStackTrace();

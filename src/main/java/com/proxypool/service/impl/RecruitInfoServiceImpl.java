@@ -222,4 +222,14 @@ public class RecruitInfoServiceImpl extends BaseService<RecruitInfoMapper, Recru
         int result = mapper.deleteByPrimaryKey(id);
         return ResultData.getSuccessResult(result);
     }
+
+    @Override
+    public int getCount() {
+        return mapper.getCount();
+    }
+
+    @Override
+    public int getTodayCount() {
+        return mapper.getTodayCount();
+    }
 }

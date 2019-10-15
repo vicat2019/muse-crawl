@@ -159,7 +159,7 @@ public class KdlBookProcessor extends ProcessorTemplate {
                 String pageNum = s.substring(index+1);
                 if (!StringUtils.isEmpty(pageNum) && TextUtils.isNumber(pageNum)) {
                     int p = Integer.parseInt(pageNum);
-                    return p <= 3;
+                    return p <= 200;
                 }
             }
             return false;

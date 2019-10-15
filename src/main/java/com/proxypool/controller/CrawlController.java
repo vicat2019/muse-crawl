@@ -56,11 +56,11 @@ public class CrawlController {
      *
      * @return ResultData
      */
-    //@Scheduled(cron = "${RECRUIT_CRON}")
+    @Scheduled(cron = "${RECRUIT_CRON}")
     public void recruit() {
         try {
             // 处理页面的时间间隔
-            proxy51jobProcessor.setInterval(1000).setThreadCount(5);
+            proxy51jobProcessor.setInterval(1000).setThreadCount(2);
             proxy51jobProcessor.execute(recruitInfoPipeline, false);
         } catch (Exception e) {
             e.printStackTrace();
@@ -74,7 +74,7 @@ public class CrawlController {
     @Scheduled(cron = "${CRAWL_BOOK_CRON}")
     public void kdlbookProcessor() {
         try {
-            kdlBookProcessor.setInterval(1000).setThreadCount(2).execute(meBookPipeline, null);
+            kdlBookProcessor.setInterval(2000).setThreadCount(2).execute(meBookPipeline, null);
         } catch (Exception e) {
             e.printStackTrace();
             log.error("抓取KDLBook电子书异常=" + e.getMessage());
@@ -93,6 +93,10 @@ public class CrawlController {
             int count = meBookService.getCount();
             int todayCount = meBookService.getTodayCount();
             String content = "当前图书总数量：" + count + ", 今日数量：" + todayCount;
+
+            int zpCount = recruitInfoService.getCount();
+            int zpTodayCount = recruitInfoService.getTodayCount();
+            content += "\n<br>当前ZP总数量：" + zpCount + ", 今日数量：" + zpTodayCount;
 
             mailService.sendSimpleMail("vicat2019@163.com", "数据监测", content);
         } catch (Exception e) {

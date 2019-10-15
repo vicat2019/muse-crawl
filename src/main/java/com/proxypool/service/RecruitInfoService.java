@@ -33,4 +33,8 @@ public interface RecruitInfoService {
      * @throws Exception 异常
      */
     ResultData rinseRecruit(int page, int pageSize) throws Exception;
+
+    int getCount();
+
+    int getTodayCount();
 }

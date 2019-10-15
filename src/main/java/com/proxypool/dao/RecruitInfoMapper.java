@@ -108,4 +108,8 @@ public interface RecruitInfoMapper {
      */
     int updateBatch(List<RecruitInfo> recruitInfos);
 
+    int getCount();
+
+    int getTodayCount();
+
 }
